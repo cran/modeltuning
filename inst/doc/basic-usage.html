@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Basic usage</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Basic usage</h1>
+
+
+
+<p>The goal of this vignette is to walk through <code>modeltuning</code>
+usage in detail. We’ll be training a classification model on the
+<code>iris</code> data-set to predict whether a flower’s species is
+Virginica or not.</p>
+<div id="load-packages" class="section level1">
+<h1>Load Packages</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(e1071)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(modeltuning) <span class="co"># devtools::install_github(&quot;dmolitor/modeltuning&quot;)</span></span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(yardstick)</span></code></pre></div>
+<div id="data-prep" class="section level2">
+<h2>Data Prep</h2>
+<p>First, let’s generate a bunch of synthetic data observations by
+adding random noise to the original <code>iris</code> features and
+combining it into one big dataframe.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>iris_new <span class="ot">&lt;-</span> <span class="fu">do.call</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="at">what =</span> rbind,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">args =</span> <span class="fu">replicate</span>(<span class="at">n =</span> <span class="dv">10</span>, iris, <span class="at">simplify =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="fu">transform</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>    <span class="at">Sepal.Length =</span> <span class="fu">jitter</span>(Sepal.Length, <span class="fl">0.1</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>    <span class="at">Sepal.Width =</span> <span class="fu">jitter</span>(Sepal.Width, <span class="fl">0.1</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>    <span class="at">Petal.Length =</span> <span class="fu">jitter</span>(Petal.Length, <span class="fl">0.1</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>    <span class="at">Petal.Width =</span> <span class="fu">jitter</span>(Petal.Width, <span class="fl">0.1</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>    <span class="at">Species =</span> <span class="fu">factor</span>(Species <span class="sc">==</span> <span class="st">&quot;virginica&quot;</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  )</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co"># Shuffle the data-set</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>iris_new <span class="ot">&lt;-</span> iris_new[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(iris_new), <span class="fu">nrow</span>(iris_new)), ]</span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co"># Quick overview of the dataset</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="fu">summary</span>(iris_new[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>])</span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#   Sepal.Length    Sepal.Width     Petal.Length     Petal.Width     </span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#  Min.   :4.298   Min.   :1.998   Min.   :0.9983   Min.   :0.09802  </span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#  1st Qu.:5.100   1st Qu.:2.799   1st Qu.:1.5984   1st Qu.:0.29982  </span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#  Median :5.799   Median :3.001   Median :4.3500   Median :1.30119  </span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#  Mean   :5.843   Mean   :3.057   Mean   :3.7580   Mean   :1.19931  </span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#  3rd Qu.:6.400   3rd Qu.:3.302   3rd Qu.:5.1000   3rd Qu.:1.80069  </span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#  Max.   :7.902   Max.   :4.401   Max.   :6.9014   Max.   :2.50172</span></span></code></pre></div>
+</div>
+<div id="function-arguments" class="section level2">
+<h2>Function arguments</h2>
+<div id="common-arguments" class="section level3">
+<h3>Common arguments</h3>
+<p>The following modeling approach holds for the <code>CV</code>,
+<code>GridSearch</code> and <code>GridSearchCV</code> classes, which are
+all very slight variations of each other. Common arguments are as
+follows:</p>
+<ul>
+<li><p><code>learner</code>: This is where you pass your predictive
+modeling function; in our case a Support Vector Machine, so
+<code>e1071::svm</code> from the e1071 package.</p></li>
+<li><p><code>scorer</code>: This is a named list of metric functions
+that will evaluate the model’s predictive performance. Each metric
+function should have two arguments, <code>truth</code> and
+<code>estimate</code> that intake the true outcome values and the
+predicted outcome values. It should output a scalar numeric score. The
+<a href="https://yardstick.tidymodels.org/">yardstick</a> package
+provides a wide array of these metric functions that should cover most
+common cases. E.g. for the RMSE of a regression,
+<code>scorer = list(rmse = yarstick::rmse_vec)</code>.</p></li>
+<li><p><code>learner_args</code>: This is a named list of function
+arguments that get passed directly to the <code>learner</code> function.
+For example, the <code>e1071::svm</code> function takes a
+<code>type</code> argument specifying whether it is a regression or
+classification task. You could specify a classification task as
+<code>learner_args = list(type = &quot;classification&quot;)</code>.</p></li>
+<li><p><code>scorer_args</code>: This is a named list of function
+arguments to pass to the scorer functions in <code>scorer</code>. This
+list should have one element per element in <code>scorer</code>. E.g. if
+<code>scorer = list(rmse = rmse_vec, mae = mae_vec)</code> then
+<code>scorer_args = list(rmse = list(...), mae = list(...))</code>.</p></li>
+<li><p><code>prediction_args</code>: This is similar to
+<code>learner_args</code>. It’s a named list of function arguments
+passed to the <code>predict</code> method. E.g. our SVM learner has a
+predict argument called <code>probability</code> whether to predict
+outcome classes or class probabilities. Specify class probabilities as
+<code>prediction_args = list(probability = TRUE)</code>. Similar to
+<code>scorer_args</code>, this list should have one element per element
+in <code>scorer</code>.</p></li>
+<li><p><code>convert_predictions</code>: A named list of functions to
+transform the output of <code>predict(...)</code> into a vector of
+predictions. By default, the model’s predicted values may not always be
+a vector. E.g. <code>predict(svm_model, probability = TRUE)</code>
+returns a matrix with class probabilities for both classes, while
+<code>predict(svm_model, probability = FALSE)</code> returns a vector.
+For calculating model accuracy you need class predictions, while ROC AUC
+requires class probabilities. Suppose that
+<code>scorer = list(accuracy = accuracy_vec, auc = roc_auc_vec)</code>.
+To ensure that accuracy gets class predictions and ROC AUC gets class
+probabilities, you can provide the corresponding prediction arguments
+<code>prediction_args = list(accuracy = NULL, auc = list(probability = TRUE))</code>
+and then convert those predictions into a vector
+<code>convert_predictions = list(accuracy = NULL, auc = function(.x) attr(.x, &quot;probabilities&quot;)[, &quot;FALSE&quot;])</code>.</p></li>
+</ul>
+</div>
+</div>
+<div id="cross-validation-arguments" class="section level2">
+<h2>Cross validation arguments</h2>
+<p>The following arguments are specific to the <code>CV</code> cross
+validation class.</p>
+<ul>
+<li><p><code>splitter</code>: This should be a function that intakes the
+training dataset and returns a list of cross validation indices.
+<code>modeltuning</code> provides a very simple function,
+<code>cv_split()</code> that will do the most simple version of
+this.</p></li>
+<li><p><code>splitter_args</code>: A named list of function arguments to
+pass to <code>splitter</code>. E.g. <code>cv_split()</code> has the
+argument <code>v</code> which specifies how many cross validation folds.
+For 3 folds, set <code>splitter_args = list(v = 3)</code>.</p></li>
+</ul>
+</div>
+<div id="grid-search-arguments" class="section level2">
+<h2>Grid search arguments</h2>
+<p>The following arguments are specific to the <code>GridSearch</code>
+grid search class.</p>
+<ul>
+<li><p><code>evaluation_data</code>: This must be a list containing
+validation data, e.g.
+<code>list(x = x_eval, y = y_eval)</code>.</p></li>
+<li><p><code>optimize_score</code>: One of <code>&quot;max&quot;</code> or
+<code>&quot;min&quot;</code>. Whether to maximize or minimize the metric defined
+in <code>scorer</code> to find the optimal grid search parameters.
+<strong>Note</strong>: if you specify multiple metric functions in
+<code>scorer</code>, modeltune will use the <em>last</em> metric
+function to find the optimal parameters.</p></li>
+</ul>
+</div>
+<div id="examples" class="section level2">
+<h2>Examples</h2>
+<p>We’ll show simple examples of each of <code>CV</code>,
+<code>GridSearch</code> and <code>GridSearchCV</code>.</p>
+<div id="cv" class="section level3">
+<h3>CV</h3>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a>iris_cv <span class="ot">&lt;-</span> CV<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>  <span class="at">learner =</span> svm,</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>  <span class="at">learner_args =</span> <span class="fu">list</span>(<span class="at">type =</span> <span class="st">&quot;C-classification&quot;</span>, <span class="at">probability =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>  <span class="at">splitter =</span> cv_split,</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">splitter_args =</span> <span class="fu">list</span>(<span class="at">v =</span> <span class="dv">3</span>),</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">scorer =</span> <span class="fu">list</span>(<span class="at">roc_auc =</span> roc_auc_vec), </span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>  <span class="at">prediction_args =</span> <span class="fu">list</span>(<span class="at">roc_auc =</span> <span class="fu">list</span>(<span class="at">probability =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>  <span class="at">convert_predictions =</span> <span class="fu">list</span>(<span class="at">roc_auc =</span> <span class="cf">function</span>(.x) <span class="fu">attr</span>(.x, <span class="st">&quot;probabilities&quot;</span>)[, <span class="st">&quot;FALSE&quot;</span>])</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>)</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a><span class="co"># Fit cross validated model</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>iris_cv_fitted <span class="ot">&lt;-</span> iris_cv<span class="sc">$</span><span class="fu">fit</span>(<span class="at">formula =</span> Species <span class="sc">~</span> ., <span class="at">data =</span> iris_new)</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>iris_cv_fitted<span class="sc">$</span>mean_metrics</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co"># $roc_auc</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co"># [1] 0.9984446</span></span></code></pre></div>
+</div>
+<div id="gridsearch" class="section level3">
+<h3>GridSearch</h3>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>iris_new_train <span class="ot">&lt;-</span> iris_new[<span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>, ]</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>iris_new_eval <span class="ot">&lt;-</span> iris_new[<span class="dv">1000</span><span class="sc">:</span><span class="fu">nrow</span>(iris_new), ]</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>iris_grid <span class="ot">&lt;-</span> GridSearch<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>  <span class="at">learner =</span> svm,</span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>  <span class="at">tune_params =</span> <span class="fu">list</span>(</span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>    <span class="at">cost =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">6</span>),</span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>    <span class="at">kernel =</span> <span class="fu">c</span>(<span class="st">&quot;polynomial&quot;</span>, <span class="st">&quot;radial&quot;</span>, <span class="st">&quot;sigmoid&quot;</span>)</span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>  ),</span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>  <span class="at">learner_args =</span> <span class="fu">list</span>(<span class="at">type =</span> <span class="st">&quot;C-classification&quot;</span>, <span class="at">probability =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>  <span class="at">evaluation_data =</span> <span class="fu">list</span>(<span class="at">x =</span> iris_new_eval[, <span class="sc">-</span><span class="dv">5</span>], <span class="at">y =</span> iris_new_eval[, <span class="dv">5</span>]),</span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>  <span class="at">scorer =</span> <span class="fu">list</span>(<span class="at">roc_auc =</span> roc_auc_vec), </span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a>  <span class="at">prediction_args =</span> <span class="fu">list</span>(<span class="at">roc_auc =</span> <span class="fu">list</span>(<span class="at">probability =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a>  <span class="at">convert_predictions =</span> <span class="fu">list</span>(<span class="at">roc_auc =</span> <span class="cf">function</span>(.x) <span class="fu">attr</span>(.x, <span class="st">&quot;probabilities&quot;</span>)[, <span class="st">&quot;FALSE&quot;</span>]),</span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>  <span class="at">optimize_score =</span> <span class="st">&quot;max&quot;</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>)</span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a><span class="co"># Fit cross validated model</span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>iris_grid_fitted <span class="ot">&lt;-</span> iris_grid<span class="sc">$</span><span class="fu">fit</span>(<span class="at">formula =</span> Species <span class="sc">~</span> ., <span class="at">data =</span> iris_new)</span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>iris_grid_fitted<span class="sc">$</span>best_params</span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a><span class="co"># $cost</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a><span class="co"># [1] 6</span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a><span class="co"># $kernel</span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a><span class="co"># [1] &quot;polynomial&quot;</span></span></code></pre></div>
+</div>
+<div id="gridsearchcv" class="section level3">
+<h3>GridSearchCV</h3>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>iris_grid <span class="ot">&lt;-</span> GridSearchCV<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a>  <span class="at">learner =</span> svm,</span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a>  <span class="at">tune_params =</span> <span class="fu">list</span>(</span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>    <span class="at">cost =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">6</span>),</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>    <span class="at">kernel =</span> <span class="fu">c</span>(<span class="st">&quot;polynomial&quot;</span>, <span class="st">&quot;radial&quot;</span>, <span class="st">&quot;sigmoid&quot;</span>)</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  ),</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="at">learner_args =</span> <span class="fu">list</span>(<span class="at">type =</span> <span class="st">&quot;C-classification&quot;</span>, <span class="at">probability =</span> <span class="cn">TRUE</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="at">splitter =</span> cv_split,</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="at">splitter_args =</span> <span class="fu">list</span>(<span class="at">v =</span> <span class="dv">3</span>),</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="at">scorer =</span> <span class="fu">list</span>(<span class="at">roc_auc =</span> roc_auc_vec), </span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>  <span class="at">prediction_args =</span> <span class="fu">list</span>(<span class="at">roc_auc =</span> <span class="fu">list</span>(<span class="at">probability =</span> <span class="cn">TRUE</span>)),</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>  <span class="at">convert_predictions =</span> <span class="fu">list</span>(<span class="at">roc_auc =</span> <span class="cf">function</span>(.x) <span class="fu">attr</span>(.x, <span class="st">&quot;probabilities&quot;</span>)[, <span class="st">&quot;FALSE&quot;</span>]),</span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>  <span class="at">optimize_score =</span> <span class="st">&quot;max&quot;</span></span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>)</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a></span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co"># Fit cross validated model</span></span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>iris_grid_fitted <span class="ot">&lt;-</span> iris_grid<span class="sc">$</span><span class="fu">fit</span>(<span class="at">formula =</span> Species <span class="sc">~</span> ., <span class="at">data =</span> iris_new)</span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>iris_grid_fitted<span class="sc">$</span>best_params</span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co"># $cost</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co"># [1] 6</span></span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co"># </span></span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co"># $kernel</span></span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co"># [1] &quot;polynomial&quot;</span></span></code></pre></div>
+</div>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

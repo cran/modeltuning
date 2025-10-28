@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+
+
+
+<title>Scaling with AWS</title>
+
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
+
+<style type="text/css">
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+span.underline{text-decoration: underline;}
+div.column{display: inline-block; vertical-align: top; width: 50%;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+</style>
+
+
+
+<style type="text/css">
+code {
+white-space: pre;
+}
+.sourceCode {
+overflow: visible;
+}
+</style>
+<style type="text/css" data-origin="pandoc">
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+{ counter-reset: source-line 0; }
+pre.numberSource code > span
+{ position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+{ content: counter(source-line);
+position: relative; left: -1em; text-align: right; vertical-align: baseline;
+border: none; display: inline-block;
+-webkit-touch-callout: none; -webkit-user-select: none;
+-khtml-user-select: none; -moz-user-select: none;
+-ms-user-select: none; user-select: none;
+padding: 0 4px; width: 4em;
+color: #aaaaaa;
+}
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa; padding-left: 4px; }
+div.sourceCode
+{ }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } 
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.at { color: #7d9029; } 
+code span.bn { color: #40a070; } 
+code span.bu { color: #008000; } 
+code span.cf { color: #007020; font-weight: bold; } 
+code span.ch { color: #4070a0; } 
+code span.cn { color: #880000; } 
+code span.co { color: #60a0b0; font-style: italic; } 
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.do { color: #ba2121; font-style: italic; } 
+code span.dt { color: #902000; } 
+code span.dv { color: #40a070; } 
+code span.er { color: #ff0000; font-weight: bold; } 
+code span.ex { } 
+code span.fl { color: #40a070; } 
+code span.fu { color: #06287e; } 
+code span.im { color: #008000; font-weight: bold; } 
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } 
+code span.kw { color: #007020; font-weight: bold; } 
+code span.op { color: #666666; } 
+code span.ot { color: #007020; } 
+code span.pp { color: #bc7a00; } 
+code span.sc { color: #4070a0; } 
+code span.ss { color: #bb6688; } 
+code span.st { color: #4070a0; } 
+code span.va { color: #19177c; } 
+code span.vs { color: #4070a0; } 
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } 
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    var j = 0;
+    while (j < rules.length) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") {
+        j++;
+        continue;
+      }
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') {
+        j++;
+        continue;
+      }
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">Scaling with AWS</h1>
+
+
+
+<p>This vignette will walk through an example of scaling a
+<code>modeltuning</code> analysis with AWS via the <a href="https://github.com/paws-r/paws">Paws SDK</a>. The following
+analysis depends on AWS credentials passed via environment variables. To
+see a detailed outline of the different ways to set AWS credentials,
+check out <a href="https://github.com/paws-r/paws/blob/main/docs/credentials.md">this
+how-to document</a>.</p>
+<div id="requisite-packages" class="section level1">
+<h1>Requisite Packages</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">library</span>(e1071)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">library</span>(future)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="fu">library</span>(modeltuning) <span class="co"># devtools::install_github(&quot;dmolitor/modeltuning&quot;)</span></span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="fu">library</span>(parallelly)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="fu">library</span>(paws)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="fu">library</span>(rsample)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="fu">library</span>(yardstick)</span></code></pre></div>
+</div>
+<div id="data-and-model-prep" class="section level1">
+<h1>Data and Model Prep</h1>
+<div id="data-prep" class="section level2">
+<h2>Data Prep</h2>
+<p>We’ll be training a classification model on the <code>iris</code>
+data-set to predict whether a flower’s species is virginica or not.</p>
+<p>First, let’s generate a bunch of synthetic data observations by
+adding random noise to the original <code>iris</code> features and
+combining it into one big dataframe.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>iris_new <span class="ot">&lt;-</span> <span class="fu">do.call</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>  <span class="at">what =</span> rbind,</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>  <span class="at">args =</span> <span class="fu">replicate</span>(<span class="at">n =</span> <span class="dv">10</span>, iris, <span class="at">simplify =</span> <span class="cn">FALSE</span>)</span>
+<span id="cb2-4"><a href="#cb2-4" tabindex="-1"></a>) <span class="sc">|&gt;</span></span>
+<span id="cb2-5"><a href="#cb2-5" tabindex="-1"></a>  <span class="fu">transform</span>(</span>
+<span id="cb2-6"><a href="#cb2-6" tabindex="-1"></a>    <span class="at">Sepal.Length =</span> <span class="fu">jitter</span>(Sepal.Length, <span class="fl">0.1</span>),</span>
+<span id="cb2-7"><a href="#cb2-7" tabindex="-1"></a>    <span class="at">Sepal.Width =</span> <span class="fu">jitter</span>(Sepal.Width, <span class="fl">0.1</span>),</span>
+<span id="cb2-8"><a href="#cb2-8" tabindex="-1"></a>    <span class="at">Petal.Length =</span> <span class="fu">jitter</span>(Petal.Length, <span class="fl">0.1</span>),</span>
+<span id="cb2-9"><a href="#cb2-9" tabindex="-1"></a>    <span class="at">Petal.Width =</span> <span class="fu">jitter</span>(Petal.Width, <span class="fl">0.1</span>),</span>
+<span id="cb2-10"><a href="#cb2-10" tabindex="-1"></a>    <span class="at">Species =</span> <span class="fu">factor</span>(Species <span class="sc">==</span> <span class="st">&quot;virginica&quot;</span>)</span>
+<span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a>  )</span>
+<span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a></span>
+<span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co"># Shuffle the data-set</span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a>iris_new <span class="ot">&lt;-</span> iris_new[<span class="fu">sample</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(iris_new), <span class="fu">nrow</span>(iris_new)), ]</span>
+<span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co"># Quick overview of the dataset</span></span>
+<span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="fu">summary</span>(iris_new[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>])</span>
+<span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#   Sepal.Length    Sepal.Width     Petal.Length     Petal.Width     </span></span>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#  Min.   :4.298   Min.   :1.998   Min.   :0.9981   Min.   :0.09805  </span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#  1st Qu.:5.100   1st Qu.:2.799   1st Qu.:1.5982   1st Qu.:0.29973  </span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#  Median :5.799   Median :3.001   Median :4.3497   Median :1.30097  </span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#  Mean   :5.843   Mean   :3.057   Mean   :3.7580   Mean   :1.19928  </span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#  3rd Qu.:6.401   3rd Qu.:3.302   3rd Qu.:5.1002   3rd Qu.:1.80084  </span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#  Max.   :7.902   Max.   :4.402   Max.   :6.9015   Max.   :2.50193</span></span></code></pre></div>
+</div>
+<div id="grid-search-specification" class="section level2">
+<h2>Grid Search Specification</h2>
+<p>Now that we’ve got the data prepped, let’s specify our predictive
+modeling approach. For this analysis I’m going to train a Support Vector
+classifier using the <code>e1071</code> package, and I’m going to use
+Grid Search in combination with 5-fold Cross-Validation to find the
+optimal values for the <code>cost</code> and <code>kernel</code>
+hyper-parameters.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="co"># Create a splitter function that will return CV folds</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a>splitter_fn <span class="ot">&lt;-</span> <span class="cf">function</span>(data) <span class="fu">lapply</span>(<span class="fu">vfold_cv</span>(data, <span class="at">v =</span> <span class="dv">5</span>)<span class="sc">$</span>splits, \(y) y<span class="sc">$</span>in_id)</span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>iris_grid <span class="ot">&lt;-</span> GridSearchCV<span class="sc">$</span><span class="fu">new</span>(</span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>  <span class="at">learner =</span> svm,</span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>  <span class="at">tune_params =</span> <span class="fu">list</span>(</span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="at">cost =</span> <span class="fu">c</span>(<span class="fl">0.01</span>, <span class="fl">0.1</span>, <span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">6</span>),</span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    <span class="at">kernel =</span> <span class="fu">c</span>(<span class="st">&quot;polynomial&quot;</span>, <span class="st">&quot;radial&quot;</span>, <span class="st">&quot;sigmoid&quot;</span>)</span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>  ),</span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>  <span class="at">learner_args =</span> <span class="fu">list</span>(</span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>    <span class="at">scale =</span> <span class="cn">TRUE</span>,</span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>    <span class="at">type =</span> <span class="st">&quot;C-classification&quot;</span>,</span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>    <span class="at">probability =</span> <span class="cn">TRUE</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>  ),</span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>  <span class="at">splitter =</span> splitter_fn,</span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>  <span class="at">scorer =</span> <span class="fu">list</span>(</span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>    <span class="at">accuracy =</span> accuracy_vec,</span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>    <span class="at">f_measure =</span> f_meas_vec,</span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>    <span class="at">auc =</span> roc_auc_vec</span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>  ),</span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>  <span class="at">prediction_args =</span> <span class="fu">list</span>(</span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>    <span class="at">accuracy =</span> <span class="cn">NULL</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>    <span class="at">f_measure =</span> <span class="cn">NULL</span>,</span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>    <span class="at">auc =</span> <span class="fu">list</span>(<span class="at">probability =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>  ),</span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>  <span class="at">convert_predictions =</span> <span class="fu">list</span>(</span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>    <span class="at">accuracy =</span> <span class="cn">NULL</span>,</span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>    <span class="at">f_measure =</span> <span class="cn">NULL</span>,</span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>    <span class="at">auc =</span> <span class="cf">function</span>(.x) <span class="fu">attr</span>(.x, <span class="st">&quot;probabilities&quot;</span>)[, <span class="st">&quot;FALSE&quot;</span>]</span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>  ),</span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>  <span class="at">optimize_score =</span> <span class="st">&quot;max&quot;</span></span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>)</span></code></pre></div>
+<p>Now that we’ve specified our Grid Search schema let’s check out the
+hyper-parameter grid and see how many models we’re going to
+estimate.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="fu">cat</span>(<span class="st">&quot;We will estimate&quot;</span>, <span class="fu">nrow</span>(iris_grid<span class="sc">$</span>tune_params), <span class="st">&quot;SVM models</span><span class="sc">\n</span><span class="st">&quot;</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a><span class="co"># We will estimate 18 SVM models</span></span></code></pre></div>
+</div>
+</div>
+<div id="launch-aws-resources" class="section level1">
+<h1>Launch AWS Resources</h1>
+<p>To speed up the estimation of our models, let’s create a remote
+cluster of 6 worker nodes to estimate the models in parallel.</p>
+<div id="launch-ec2-instances" class="section level2">
+<h2>Launch EC2 Instances</h2>
+<p>First, we will launch 6 instances using a custom AMI that contains R
+and a bunch of essential R packages. While this AMI is not available as
+a community AMI there are definitely good AMIs out there that have a
+comprehensive set of R packages and corresponding tools installed.
+<strong>Note:</strong> which parameters you need to specify when
+launching EC2 instances may vary greatly depending on your account’s
+security configurations.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a>ec2_client <span class="ot">&lt;-</span> <span class="fu">ec2</span>()</span>
+<span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># Request Instances</span></span>
+<span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a>instance_req <span class="ot">&lt;-</span> ec2_client<span class="sc">$</span><span class="fu">run_instances</span>(</span>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a>  <span class="at">ImageId =</span> <span class="st">&quot;ami-06dd49fc9e3a5acee&quot;</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" tabindex="-1"></a>  <span class="at">InstanceType =</span> <span class="st">&quot;t2.large&quot;</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" tabindex="-1"></a>  <span class="at">KeyName =</span> key_name,</span>
+<span id="cb5-8"><a href="#cb5-8" tabindex="-1"></a>  <span class="at">MaxCount =</span> <span class="dv">6</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" tabindex="-1"></a>  <span class="at">MinCount =</span> <span class="dv">6</span>,</span>
+<span id="cb5-10"><a href="#cb5-10" tabindex="-1"></a>  <span class="at">InstanceInitiatedShutdownBehavior =</span> <span class="st">&quot;terminate&quot;</span>,</span>
+<span id="cb5-11"><a href="#cb5-11" tabindex="-1"></a>  <span class="at">SecurityGroupIds =</span> security_group,</span>
+<span id="cb5-12"><a href="#cb5-12" tabindex="-1"></a>  <span class="co"># This names the instances</span></span>
+<span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a>  <span class="at">TagSpecifications =</span> <span class="fu">list</span>(</span>
+<span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a>    <span class="fu">list</span>(</span>
+<span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a>      <span class="at">ResourceType =</span> <span class="st">&quot;instance&quot;</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a>      <span class="at">Tags =</span> <span class="fu">list</span>(</span>
+<span id="cb5-17"><a href="#cb5-17" tabindex="-1"></a>        <span class="fu">list</span>(</span>
+<span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a>          <span class="at">Key =</span> <span class="st">&quot;Name&quot;</span>,</span>
+<span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>          <span class="at">Value =</span> <span class="st">&quot;Worker Node&quot;</span></span>
+<span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a>        )</span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a>      )</span>
+<span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a>    )</span>
+<span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a>  )</span>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a>)</span></code></pre></div>
+<p>Now that we’ve launched the instances we need to wait until they all
+respond as <code>&quot;running&quot;</code> before we try to do anything (We also
+need to wait for ~ 1 minute for the instances to initialize or they’ll
+reject our SSH login attempts).</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a><span class="co"># Chalk up a quick function to return instance IDs from our request</span></span>
+<span id="cb6-2"><a href="#cb6-2" tabindex="-1"></a>instance_ids <span class="ot">&lt;-</span> <span class="cf">function</span>(response) {</span>
+<span id="cb6-3"><a href="#cb6-3" tabindex="-1"></a>  <span class="fu">vapply</span>(response<span class="sc">$</span>Instances, <span class="cf">function</span>(i) i<span class="sc">$</span>InstanceId, <span class="fu">character</span>(<span class="dv">1</span>))</span>
+<span id="cb6-4"><a href="#cb6-4" tabindex="-1"></a>}</span>
+<span id="cb6-5"><a href="#cb6-5" tabindex="-1"></a></span>
+<span id="cb6-6"><a href="#cb6-6" tabindex="-1"></a><span class="co"># Wait for instances to all respond as &#39;running&#39;</span></span>
+<span id="cb6-7"><a href="#cb6-7" tabindex="-1"></a><span class="cf">while</span>(</span>
+<span id="cb6-8"><a href="#cb6-8" tabindex="-1"></a>  <span class="sc">!</span><span class="fu">all</span>(</span>
+<span id="cb6-9"><a href="#cb6-9" tabindex="-1"></a>    <span class="fu">vapply</span>(</span>
+<span id="cb6-10"><a href="#cb6-10" tabindex="-1"></a>      ec2_client<span class="sc">$</span></span>
+<span id="cb6-11"><a href="#cb6-11" tabindex="-1"></a>      <span class="fu">describe_instances</span>(<span class="at">InstanceIds =</span> <span class="fu">instance_ids</span>(instance_req))<span class="sc">$</span></span>
+<span id="cb6-12"><a href="#cb6-12" tabindex="-1"></a>      Reservations[[<span class="dv">1</span>]]<span class="sc">$</span></span>
+<span id="cb6-13"><a href="#cb6-13" tabindex="-1"></a>      Instances,</span>
+<span id="cb6-14"><a href="#cb6-14" tabindex="-1"></a>      <span class="cf">function</span>(i) i<span class="sc">$</span>State<span class="sc">$</span>Name,</span>
+<span id="cb6-15"><a href="#cb6-15" tabindex="-1"></a>      <span class="fu">character</span>(<span class="dv">1</span>)</span>
+<span id="cb6-16"><a href="#cb6-16" tabindex="-1"></a>    ) <span class="sc">==</span> <span class="st">&quot;running&quot;</span></span>
+<span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a>  )</span>
+<span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a>) {</span>
+<span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a>  <span class="fu">Sys.sleep</span>(<span class="dv">5</span>)</span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a>}</span>
+<span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a></span>
+<span id="cb6-22"><a href="#cb6-22" tabindex="-1"></a><span class="co"># Rough heuristic -- give additional 45 seconds for instances to initialize</span></span>
+<span id="cb6-23"><a href="#cb6-23" tabindex="-1"></a><span class="fu">Sys.sleep</span>(<span class="dv">45</span>)</span></code></pre></div>
+</div>
+<div id="create-cluster" class="section level2">
+<h2>Create Cluster</h2>
+<p>Now, in order to set up our compute cluster we need to get the IP
+addresses from these instances.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" tabindex="-1"></a><span class="co"># Get public IPs</span></span>
+<span id="cb7-2"><a href="#cb7-2" tabindex="-1"></a>inst_public_ips <span class="ot">&lt;-</span> <span class="fu">vapply</span>(</span>
+<span id="cb7-3"><a href="#cb7-3" tabindex="-1"></a>  ec2_client<span class="sc">$</span></span>
+<span id="cb7-4"><a href="#cb7-4" tabindex="-1"></a>    <span class="fu">describe_instances</span>(<span class="at">InstanceIds =</span> <span class="fu">instance_ids</span>(instance_req))<span class="sc">$</span></span>
+<span id="cb7-5"><a href="#cb7-5" tabindex="-1"></a>    Reservations[[<span class="dv">1</span>]]<span class="sc">$</span></span>
+<span id="cb7-6"><a href="#cb7-6" tabindex="-1"></a>    Instances,</span>
+<span id="cb7-7"><a href="#cb7-7" tabindex="-1"></a>  <span class="cf">function</span>(i) i<span class="sc">$</span>PublicIpAddress,</span>
+<span id="cb7-8"><a href="#cb7-8" tabindex="-1"></a>  <span class="fu">character</span>(<span class="dv">1</span>)</span>
+<span id="cb7-9"><a href="#cb7-9" tabindex="-1"></a>)</span></code></pre></div>
+<p>Finally, we can create a compute cluster on these worker nodes via
+SSH.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>cl <span class="ot">&lt;-</span> <span class="fu">makeClusterPSOCK</span>(</span>
+<span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="at">worker =</span> inst_public_ips,</span>
+<span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">user =</span> <span class="st">&quot;ubuntu&quot;</span>,</span>
+<span id="cb8-4"><a href="#cb8-4" tabindex="-1"></a>  <span class="at">rshopts =</span> <span class="fu">c</span>(<span class="st">&quot;-o&quot;</span>, <span class="st">&quot;StrictHostKeyChecking=no&quot;</span>,</span>
+<span id="cb8-5"><a href="#cb8-5" tabindex="-1"></a>              <span class="st">&quot;-o&quot;</span>, <span class="st">&quot;IdentitiesOnly=yes&quot;</span>,</span>
+<span id="cb8-6"><a href="#cb8-6" tabindex="-1"></a>              <span class="st">&quot;-i&quot;</span>, pem_fp), <span class="co"># Local filepath to private SSH key-pair</span></span>
+<span id="cb8-7"><a href="#cb8-7" tabindex="-1"></a>  <span class="at">connectTimeout =</span> <span class="dv">25</span>,</span>
+<span id="cb8-8"><a href="#cb8-8" tabindex="-1"></a>  <span class="at">tries =</span> <span class="dv">3</span></span>
+<span id="cb8-9"><a href="#cb8-9" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+</div>
+<div id="estimate-models" class="section level1">
+<h1>Estimate Models</h1>
+<p>Now that we’ve created our compute cluster, we can use the
+<code>future</code> package to specify our parallelization plan. Since
+<code>modeltuning</code> is built on top of the <code>future</code>
+framework, it will automatically parallelize the model estimation across
+our 6-worker cluster. The following parallelization
+<strong>topology</strong> basically is telling <code>future</code> to
+parallelize the grid-search models across the compute cluster, and to
+parallelize each model’s cross-validation across the cores of the
+instance it is being evaluated on.</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">plan</span>(</span>
+<span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a>  <span class="fu">list</span>(</span>
+<span id="cb9-3"><a href="#cb9-3" tabindex="-1"></a>    <span class="fu">tweak</span>(cluster, <span class="at">workers =</span> cl),</span>
+<span id="cb9-4"><a href="#cb9-4" tabindex="-1"></a>    multisession</span>
+<span id="cb9-5"><a href="#cb9-5" tabindex="-1"></a>  )</span>
+<span id="cb9-6"><a href="#cb9-6" tabindex="-1"></a>)</span></code></pre></div>
+<p>Finally, let’s estimate our Grid Search models in parallel!</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" tabindex="-1"></a>iris_grid_fitted <span class="ot">&lt;-</span> iris_grid<span class="sc">$</span><span class="fu">fit</span>(</span>
+<span id="cb10-2"><a href="#cb10-2" tabindex="-1"></a>  <span class="at">formula =</span> Species <span class="sc">~</span> .,</span>
+<span id="cb10-3"><a href="#cb10-3" tabindex="-1"></a>  <span class="at">data =</span> iris_new,</span>
+<span id="cb10-4"><a href="#cb10-4" tabindex="-1"></a>  <span class="at">progress =</span> <span class="cn">TRUE</span></span>
+<span id="cb10-5"><a href="#cb10-5" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+<div id="best-modelparameters" class="section level1">
+<h1>Best Model/Parameters</h1>
+<p>Let’s check out the info on our best model.</p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>best_idx <span class="ot">&lt;-</span> iris_grid_fitted<span class="sc">$</span>best_idx</span>
+<span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>metrics <span class="ot">&lt;-</span> iris_grid_fitted<span class="sc">$</span>metrics</span>
+<span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a></span>
+<span id="cb11-4"><a href="#cb11-4" tabindex="-1"></a><span class="co"># Print model metrics of best model</span></span>
+<span id="cb11-5"><a href="#cb11-5" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb11-6"><a href="#cb11-6" tabindex="-1"></a>  <span class="st">&quot; Accuracy:&quot;</span>, <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> metrics<span class="sc">$</span>accuracy[[best_idx]], <span class="dv">2</span>),</span>
+<span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="st">&quot;%</span><span class="sc">\n</span><span class="st">F-Measure:&quot;</span>, <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> metrics<span class="sc">$</span>f_measure[[best_idx]], <span class="dv">2</span>),</span>
+<span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  <span class="st">&quot;%</span><span class="sc">\n</span><span class="st">      AUC:&quot;</span>, <span class="fu">round</span>(metrics<span class="sc">$</span>auc[[best_idx]], <span class="dv">4</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span></span>
+<span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>)</span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="co">#  Accuracy: 98.4 %</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="co"># F-Measure: 98.8 %</span></span>
+<span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="co">#       AUC: 0.9993</span></span>
+<span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a></span>
+<span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a>params <span class="ot">&lt;-</span> iris_grid_fitted<span class="sc">$</span>best_params</span>
+<span id="cb11-15"><a href="#cb11-15" tabindex="-1"></a></span>
+<span id="cb11-16"><a href="#cb11-16" tabindex="-1"></a><span class="co"># Print the best hyper-parameters</span></span>
+<span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="fu">cat</span>(</span>
+<span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a>  <span class="st">&quot;  Optimal Cost:&quot;</span>, params[[<span class="st">&quot;cost&quot;</span>]],</span>
+<span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a>  <span class="st">&quot;</span><span class="sc">\n</span><span class="st">Optimal Kernel:&quot;</span>, params[[<span class="st">&quot;kernel&quot;</span>]], <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span></span>
+<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a>)</span>
+<span id="cb11-21"><a href="#cb11-21" tabindex="-1"></a><span class="co">#   Optimal Cost: 6 </span></span>
+<span id="cb11-22"><a href="#cb11-22" tabindex="-1"></a><span class="co"># Optimal Kernel: polynomial</span></span></code></pre></div>
+</div>
+<div id="kill-aws-resources" class="section level1">
+<h1>Kill AWS Resources</h1>
+<p>Now that we’ve completed our mini-analysis let’s make sure to kill
+all our AWS resources. Since all we’ve done is launch EC2 instances, all
+this consists of is making sure that the instances are all shut
+down.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" tabindex="-1"></a>ec2_client<span class="sc">$</span><span class="fu">stop_instances</span>(</span>
+<span id="cb12-2"><a href="#cb12-2" tabindex="-1"></a>  <span class="at">InstanceIds =</span> <span class="fu">instance_ids</span>(instance_req)</span>
+<span id="cb12-3"><a href="#cb12-3" tabindex="-1"></a>)</span></code></pre></div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
