@@ -397,16 +397,16 @@ by <code>cyl</code>.</p>
 <span id="cb2-11"><a href="#cb2-11" tabindex="-1"></a></span>
 <span id="cb2-12"><a href="#cb2-12" tabindex="-1"></a><span class="fu">coef</span>(mtcars_cv_fitted<span class="sc">$</span>model)</span>
 <span id="cb2-13"><a href="#cb2-13" tabindex="-1"></a><span class="co">#  (Intercept)          cyl         disp           hp         drat           wt </span></span>
-<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co"># 13.234382626 -0.041314722 -0.002879447 -0.005792837  2.332596452 -2.207841014 </span></span>
+<span id="cb2-14"><a href="#cb2-14" tabindex="-1"></a><span class="co"># -6.737952823  0.470186610  0.008755892 -0.008871287  2.190894438 -1.091086208 </span></span>
 <span id="cb2-15"><a href="#cb2-15" tabindex="-1"></a><span class="co">#         qsec           vs           am         gear         carb </span></span>
-<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#  0.593572056 -0.535088086  2.518021887 -0.443316046 -0.906259318</span></span></code></pre></div>
+<span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co">#  0.931973265  1.486668399  5.956682704  1.052339611 -1.363319915</span></span></code></pre></div>
 <p>We demonstrate that the fully fitted model is identical to using
 <code>glm</code> directly with the full dataset and weights.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">glm</span>(mpg <span class="sc">~</span> . <span class="sc">-</span> w, <span class="at">data =</span> mtcars, <span class="at">weights =</span> mtcars<span class="sc">$</span>w))</span>
 <span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a><span class="co">#  (Intercept)          cyl         disp           hp         drat           wt </span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co"># 13.234382626 -0.041314722 -0.002879447 -0.005792837  2.332596452 -2.207841014 </span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a><span class="co"># -6.737952823  0.470186610  0.008755892 -0.008871287  2.190894438 -1.091086208 </span></span>
 <span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a><span class="co">#         qsec           vs           am         gear         carb </span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#  0.593572056 -0.535088086  2.518021887 -0.443316046 -0.906259318</span></span></code></pre></div>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a><span class="co">#  0.931973265  1.486668399  5.956682704  1.052339611 -1.363319915</span></span></code></pre></div>
 </div>
 <div id="using-.index" class="section level2">
 <h2>Using .index</h2>
@@ -428,16 +428,16 @@ weights vector with the indices of the current subset using
 <span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a></span>
 <span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="fu">coef</span>(mtcars_cv_fitted<span class="sc">$</span>model)</span>
 <span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#  (Intercept)          cyl         disp           hp         drat           wt </span></span>
-<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co"># 13.234382626 -0.041314722 -0.002879447 -0.005792837  2.332596452 -2.207841014 </span></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co"># -6.737952823  0.470186610  0.008755892 -0.008871287  2.190894438 -1.091086208 </span></span>
 <span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#         qsec           vs           am         gear         carb </span></span>
-<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#  0.593572056 -0.535088086  2.518021887 -0.443316046 -0.906259318</span></span></code></pre></div>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a><span class="co">#  0.931973265  1.486668399  5.956682704  1.052339611 -1.363319915</span></span></code></pre></div>
 <p>We again demonstrate that the fully fitted model is identical to
 using <code>glm</code> directly with the full dataset and weights.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" tabindex="-1"></a><span class="fu">coef</span>(<span class="fu">glm</span>(mpg <span class="sc">~</span> . <span class="sc">-</span> w, <span class="at">data =</span> mtcars, <span class="at">weights =</span> mtcars<span class="sc">$</span>w))</span>
 <span id="cb5-2"><a href="#cb5-2" tabindex="-1"></a><span class="co">#  (Intercept)          cyl         disp           hp         drat           wt </span></span>
-<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># 13.234382626 -0.041314722 -0.002879447 -0.005792837  2.332596452 -2.207841014 </span></span>
+<span id="cb5-3"><a href="#cb5-3" tabindex="-1"></a><span class="co"># -6.737952823  0.470186610  0.008755892 -0.008871287  2.190894438 -1.091086208 </span></span>
 <span id="cb5-4"><a href="#cb5-4" tabindex="-1"></a><span class="co">#         qsec           vs           am         gear         carb </span></span>
-<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#  0.593572056 -0.535088086  2.518021887 -0.443316046 -0.906259318</span></span></code></pre></div>
+<span id="cb5-5"><a href="#cb5-5" tabindex="-1"></a><span class="co">#  0.931973265  1.486668399  5.956682704  1.052339611 -1.363319915</span></span></code></pre></div>
 </div>
 </div>
 <div id="gridsearch-example" class="section level1">
@@ -469,7 +469,7 @@ demonstrate both below.</p>
 <span id="cb6-17"><a href="#cb6-17" tabindex="-1"></a><span class="co"># $na.action[[1]]</span></span>
 <span id="cb6-18"><a href="#cb6-18" tabindex="-1"></a><span class="co"># function (object, ...) </span></span>
 <span id="cb6-19"><a href="#cb6-19" tabindex="-1"></a><span class="co"># UseMethod(&quot;na.omit&quot;)</span></span>
-<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co"># &lt;bytecode: 0x115f5fc78&gt;</span></span>
+<span id="cb6-20"><a href="#cb6-20" tabindex="-1"></a><span class="co"># &lt;bytecode: 0x127c5ab60&gt;</span></span>
 <span id="cb6-21"><a href="#cb6-21" tabindex="-1"></a><span class="co"># &lt;environment: namespace:stats&gt;</span></span></code></pre></div>
 </div>
 <div id="will-error-when-.index-is-used" class="section level2">
@@ -502,10 +502,12 @@ fixed, we can also just supply the raw weight vectors directly.</p>
 <span id="cb8-10"><a href="#cb8-10" tabindex="-1"></a>mtcars_gs_fitted <span class="ot">&lt;-</span> mtcars_gs<span class="sc">$</span><span class="fu">fit</span>(<span class="at">formula =</span> mpg <span class="sc">~</span> . <span class="sc">-</span> w, <span class="at">data =</span> mtcars_train)</span>
 <span id="cb8-11"><a href="#cb8-11" tabindex="-1"></a></span>
 <span id="cb8-12"><a href="#cb8-12" tabindex="-1"></a><span class="fu">coef</span>(mtcars_gs_fitted<span class="sc">$</span>best_model)</span>
-<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co"># (Intercept)         cyl        disp          hp        drat          wt </span></span>
-<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co"># -7.68563605  0.78331452 -0.01702229  0.03480500  4.29284983  0.47542825 </span></span>
-<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#        qsec          vs          am        gear        carb </span></span>
-<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#  0.16442118  0.90738896  4.77674125  2.64108709 -3.27275003</span></span></code></pre></div>
+<span id="cb8-13"><a href="#cb8-13" tabindex="-1"></a><span class="co">#   (Intercept)           cyl          disp            hp          drat </span></span>
+<span id="cb8-14"><a href="#cb8-14" tabindex="-1"></a><span class="co"># -13.138647703   0.483941000   0.001173281   0.007948945   3.622422883 </span></span>
+<span id="cb8-15"><a href="#cb8-15" tabindex="-1"></a><span class="co">#            wt          qsec            vs            am          gear </span></span>
+<span id="cb8-16"><a href="#cb8-16" tabindex="-1"></a><span class="co">#   0.084209424   0.451019936  -0.190586313   4.154764868   4.192965738 </span></span>
+<span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#          carb </span></span>
+<span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#  -2.925752983</span></span></code></pre></div>
 </div>
 </div>
 <div id="gridsearchcv-example" class="section level1">
@@ -531,9 +533,9 @@ subsets of data.</p>
 <span id="cb9-12"><a href="#cb9-12" tabindex="-1"></a></span>
 <span id="cb9-13"><a href="#cb9-13" tabindex="-1"></a><span class="fu">coef</span>(mtcars_gs_cv_fitted<span class="sc">$</span>best_model)</span>
 <span id="cb9-14"><a href="#cb9-14" tabindex="-1"></a><span class="co">#  (Intercept)          cyl         disp           hp         drat           wt </span></span>
-<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co"># 13.234382626 -0.041314722 -0.002879447 -0.005792837  2.332596452 -2.207841014 </span></span>
+<span id="cb9-15"><a href="#cb9-15" tabindex="-1"></a><span class="co"># -6.737952823  0.470186610  0.008755892 -0.008871287  2.190894438 -1.091086208 </span></span>
 <span id="cb9-16"><a href="#cb9-16" tabindex="-1"></a><span class="co">#         qsec           vs           am         gear         carb </span></span>
-<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#  0.593572056 -0.535088086  2.518021887 -0.443316046 -0.906259318</span></span></code></pre></div>
+<span id="cb9-17"><a href="#cb9-17" tabindex="-1"></a><span class="co">#  0.931973265  1.486668399  5.956682704  1.052339611 -1.363319915</span></span></code></pre></div>
 </div>
 <div id="using-.index-1" class="section level2">
 <h2>Using .index</h2>
@@ -551,9 +553,9 @@ subsets of data.</p>
 <span id="cb10-12"><a href="#cb10-12" tabindex="-1"></a></span>
 <span id="cb10-13"><a href="#cb10-13" tabindex="-1"></a><span class="fu">coef</span>(mtcars_gs_cv_fitted<span class="sc">$</span>best_model)</span>
 <span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#  (Intercept)          cyl         disp           hp         drat           wt </span></span>
-<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co"># 13.234382626 -0.041314722 -0.002879447 -0.005792837  2.332596452 -2.207841014 </span></span>
+<span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co"># -6.737952823  0.470186610  0.008755892 -0.008871287  2.190894438 -1.091086208 </span></span>
 <span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="co">#         qsec           vs           am         gear         carb </span></span>
-<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#  0.593572056 -0.535088086  2.518021887 -0.443316046 -0.906259318</span></span></code></pre></div>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#  0.931973265  1.486668399  5.956682704  1.052339611 -1.363319915</span></span></code></pre></div>
 </div>
 </div>
 

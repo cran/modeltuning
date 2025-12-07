@@ -373,12 +373,12 @@ combining it into one big dataframe.</p>
 <span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co"># Quick overview of the dataset</span></span>
 <span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="fu">summary</span>(iris_new[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>])</span>
 <span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#   Sepal.Length    Sepal.Width     Petal.Length     Petal.Width     </span></span>
-<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#  Min.   :4.298   Min.   :1.998   Min.   :0.9983   Min.   :0.09802  </span></span>
-<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#  1st Qu.:5.100   1st Qu.:2.799   1st Qu.:1.5984   1st Qu.:0.29982  </span></span>
-<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#  Median :5.799   Median :3.001   Median :4.3500   Median :1.30119  </span></span>
-<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#  Mean   :5.843   Mean   :3.057   Mean   :3.7580   Mean   :1.19931  </span></span>
-<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#  3rd Qu.:6.400   3rd Qu.:3.302   3rd Qu.:5.1000   3rd Qu.:1.80069  </span></span>
-<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#  Max.   :7.902   Max.   :4.401   Max.   :6.9014   Max.   :2.50172</span></span></code></pre></div>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#  Min.   :4.298   Min.   :1.998   Min.   :0.9982   Min.   :0.09819  </span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#  1st Qu.:5.101   1st Qu.:2.800   1st Qu.:1.5982   1st Qu.:0.29986  </span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#  Median :5.799   Median :3.001   Median :4.3498   Median :1.30102  </span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#  Mean   :5.843   Mean   :3.057   Mean   :3.7580   Mean   :1.19935  </span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#  3rd Qu.:6.400   3rd Qu.:3.302   3rd Qu.:5.1004   3rd Qu.:1.80074  </span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#  Max.   :7.901   Max.   :4.401   Max.   :6.9018   Max.   :2.50198</span></span></code></pre></div>
 </div>
 <div id="function-arguments" class="section level2">
 <h2>Function arguments</h2>
@@ -490,7 +490,7 @@ function to find the optimal parameters.</p></li>
 <span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
 <span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>iris_cv_fitted<span class="sc">$</span>mean_metrics</span>
 <span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co"># $roc_auc</span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co"># [1] 0.9984446</span></span></code></pre></div>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a><span class="co"># [1] 0.9983296</span></span></code></pre></div>
 </div>
 <div id="gridsearch" class="section level3">
 <h3>GridSearch</h3>
@@ -543,10 +543,10 @@ function to find the optimal parameters.</p></li>
 <span id="cb5-18"><a href="#cb5-18" tabindex="-1"></a></span>
 <span id="cb5-19"><a href="#cb5-19" tabindex="-1"></a>iris_grid_fitted<span class="sc">$</span>best_params</span>
 <span id="cb5-20"><a href="#cb5-20" tabindex="-1"></a><span class="co"># $cost</span></span>
-<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co"># [1] 6</span></span>
+<span id="cb5-21"><a href="#cb5-21" tabindex="-1"></a><span class="co"># [1] 0.5</span></span>
 <span id="cb5-22"><a href="#cb5-22" tabindex="-1"></a><span class="co"># </span></span>
 <span id="cb5-23"><a href="#cb5-23" tabindex="-1"></a><span class="co"># $kernel</span></span>
-<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co"># [1] &quot;polynomial&quot;</span></span></code></pre></div>
+<span id="cb5-24"><a href="#cb5-24" tabindex="-1"></a><span class="co"># [1] &quot;radial&quot;</span></span></code></pre></div>
 </div>
 </div>
 </div>

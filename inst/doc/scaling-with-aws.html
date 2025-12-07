@@ -384,12 +384,12 @@ combining it into one big dataframe.</p>
 <span id="cb2-16"><a href="#cb2-16" tabindex="-1"></a><span class="co"># Quick overview of the dataset</span></span>
 <span id="cb2-17"><a href="#cb2-17" tabindex="-1"></a><span class="fu">summary</span>(iris_new[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>])</span>
 <span id="cb2-18"><a href="#cb2-18" tabindex="-1"></a><span class="co">#   Sepal.Length    Sepal.Width     Petal.Length     Petal.Width     </span></span>
-<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#  Min.   :4.298   Min.   :1.998   Min.   :0.9981   Min.   :0.09805  </span></span>
-<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#  1st Qu.:5.100   1st Qu.:2.799   1st Qu.:1.5982   1st Qu.:0.29973  </span></span>
-<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#  Median :5.799   Median :3.001   Median :4.3497   Median :1.30097  </span></span>
-<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#  Mean   :5.843   Mean   :3.057   Mean   :3.7580   Mean   :1.19928  </span></span>
-<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#  3rd Qu.:6.401   3rd Qu.:3.302   3rd Qu.:5.1002   3rd Qu.:1.80084  </span></span>
-<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#  Max.   :7.902   Max.   :4.402   Max.   :6.9015   Max.   :2.50193</span></span></code></pre></div>
+<span id="cb2-19"><a href="#cb2-19" tabindex="-1"></a><span class="co">#  Min.   :4.298   Min.   :1.998   Min.   :0.9981   Min.   :0.09812  </span></span>
+<span id="cb2-20"><a href="#cb2-20" tabindex="-1"></a><span class="co">#  1st Qu.:5.100   1st Qu.:2.800   1st Qu.:1.5984   1st Qu.:0.30011  </span></span>
+<span id="cb2-21"><a href="#cb2-21" tabindex="-1"></a><span class="co">#  Median :5.799   Median :3.001   Median :4.3499   Median :1.30091  </span></span>
+<span id="cb2-22"><a href="#cb2-22" tabindex="-1"></a><span class="co">#  Mean   :5.843   Mean   :3.057   Mean   :3.7580   Mean   :1.19935  </span></span>
+<span id="cb2-23"><a href="#cb2-23" tabindex="-1"></a><span class="co">#  3rd Qu.:6.401   3rd Qu.:3.302   3rd Qu.:5.1003   3rd Qu.:1.80074  </span></span>
+<span id="cb2-24"><a href="#cb2-24" tabindex="-1"></a><span class="co">#  Max.   :7.901   Max.   :4.401   Max.   :6.9019   Max.   :2.50195</span></span></code></pre></div>
 </div>
 <div id="grid-search-specification" class="section level2">
 <h2>Grid Search Specification</h2>
@@ -565,8 +565,8 @@ instance it is being evaluated on.</p>
 <span id="cb11-7"><a href="#cb11-7" tabindex="-1"></a>  <span class="st">&quot;%</span><span class="sc">\n</span><span class="st">F-Measure:&quot;</span>, <span class="fu">round</span>(<span class="dv">100</span> <span class="sc">*</span> metrics<span class="sc">$</span>f_measure[[best_idx]], <span class="dv">2</span>),</span>
 <span id="cb11-8"><a href="#cb11-8" tabindex="-1"></a>  <span class="st">&quot;%</span><span class="sc">\n</span><span class="st">      AUC:&quot;</span>, <span class="fu">round</span>(metrics<span class="sc">$</span>auc[[best_idx]], <span class="dv">4</span>), <span class="st">&quot;</span><span class="sc">\n</span><span class="st">&quot;</span></span>
 <span id="cb11-9"><a href="#cb11-9" tabindex="-1"></a>)</span>
-<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="co">#  Accuracy: 98.4 %</span></span>
-<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="co"># F-Measure: 98.8 %</span></span>
+<span id="cb11-10"><a href="#cb11-10" tabindex="-1"></a><span class="co">#  Accuracy: 98.27 %</span></span>
+<span id="cb11-11"><a href="#cb11-11" tabindex="-1"></a><span class="co"># F-Measure: 98.7 %</span></span>
 <span id="cb11-12"><a href="#cb11-12" tabindex="-1"></a><span class="co">#       AUC: 0.9993</span></span>
 <span id="cb11-13"><a href="#cb11-13" tabindex="-1"></a></span>
 <span id="cb11-14"><a href="#cb11-14" tabindex="-1"></a>params <span class="ot">&lt;-</span> iris_grid_fitted<span class="sc">$</span>best_params</span>
